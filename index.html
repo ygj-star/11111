@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实习能量站 · 新人成长导航智能看板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .role-bar {
+            background: white;
+            border-radius: 60px;
+            padding: 6px;
+            display: inline-flex;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .role-btn {
+            border: none;
+            background: transparent;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #5e5e6e;
+        }
+        .role-btn.active {
+            background: #1e6f3f;
+            color: white;
+        }
+        h2 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+        .sub {
+            color: #5c6b7e;
+            margin-bottom: 24px;
+            border-left: 4px solid #1e6f3f;
+            padding-left: 12px;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+        }
+        .intern-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e9edf2;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        .name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e6f3f, #2b8c5a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .stage-badge {
+            background: #eef2fa;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .progress-area {
+            margin: 16px 0;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 20px;
+            height: 8px;
+        }
+        .progress-fill {
+            background: #1e6f3f;
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+        }
+        .task-list {
+            margin: 16px 0;
+            list-style: none;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 16px;
+        }
+        .task-check {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #1e6f3f;
+        }
+        .task-name {
+            flex: 1;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: #8c9aa8;
+        }
+        .ai-suggestion {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 10px 12px;
+            border-radius: 16px;
+            margin: 16px 0;
+            font-size: 0.85rem;
+        }
+        .mentor-comment {
+            background: #fef9e3;
+            border-radius: 14px;
+            padding: 10px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+        button {
+            background: #1e6f3f;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .add-task-form {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .add-task-form input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #ccc;
+        }
+        .fitness-score {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #edf2f7;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8ba0b5;
+        }
+        textarea {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div>
+            <h2>🌱 实习能量站 · 成长导航智能看板</h2>
+            <div class="sub">导师规范带教 · 实习生告别迷茫 · 招聘同学实时适岗</div>
+        </div>
+        <div class="role-bar">
+            <button class="role-btn active" data-role="mentor">👩‍🏫 导师视角</button>
+            <button class="role-btn" data-role="intern">🧑‍🎓 实习生视角</button>
+            <button class="role-btn" data-role="recruiter">📊 招聘同学视角</button>
+        </div>
+    </div>
+    <div id="app-content"></div>
+    <footer>🤖 AI智能建议基于任务进度实时生成 | 导师可下发任务/评语 · 实习生可自评更新</footer>
+</div>
+<script>
+    let internsData = [
+        { id:1, name:"林清瑶", stage:"第1周 · 融入期", tasks:[
+            { id:"t1", name:"了解业务架构与产品线", completed:true },
+            { id:"t2", name:"熟悉内部协作工具(企微/文档)", completed:true },
+            { id:"t3", name:"完成行业竞品分析报告", completed:false },
+            { id:"t4", name:"参加晨会并主动提问", completed:false }
+        ], mentorComment:"学习态度积极，建议多主动参与讨论。", fitnessOverride:null },
+        { id:2, name:"张子轩", stage:"第2周 · 基础实战", tasks:[
+            { id:"t1", name:"协助完成数据清洗脚本", completed:true },
+            { id:"t2", name:"学习SQL高级查询", completed:true },
+            { id:"t3", name:"参与用户调研访谈", completed:false },
+            { id:"t4", name:"产出第一版分析看板", completed:false },
+            { id:"t5", name:"复盘周报提交", completed:false }
+        ], mentorComment:"技术基础不错，需要提升跨部门沟通。", fitnessOverride:null },
+        { id:3, name:"陈思敏", stage:"第3周 · 项目深入", tasks:[
+            { id:"t1", name:"独立跟进A/B测试", completed:true },
+            { id:"t2", name:"完成用户画像特征工程", completed:true },
+            { id:"t3", name:"撰写阶段性复盘文档", completed:true },
+            { id:"t4", name:"准备mini项目路演", completed:false }
+        ], mentorComment:"执行力强，路演需加强逻辑表达。", fitnessOverride:null }
+    ];
+
+    function computeStats(intern) {
+        let total = intern.tasks.length, completed = intern.tasks.filter(t=>t.completed).length;
+        let rate = total===0?0: (completed/total)*100;
+        let comment = intern.mentorComment.toLowerCase();
+        let bonus = comment.includes("积极")||comment.includes("不错")||comment.includes("执行力强")?8 : comment.includes("需要加强")||comment.includes("需提升")?-5:0;
+        if(comment.includes("优秀")) bonus=12;
+        let score = Math.min(100, Math.max(0, rate*0.7 + (bonus+50)*0.3));
+        return { completionRate: Math.round(rate), fitnessScore: Math.round(score) };
+    }
+
+    function getAISuggestion(intern) {
+        let rate = computeStats(intern).completionRate;
+        let undone = intern.tasks.filter(t=>!t.completed).length;
+        if(rate>=80) return "🎉 进度优异！建议挑战进阶任务：参与组内评审或主导小需求。";
+        if(rate>=50) return "📈 保持节奏，剩下任务拆解为小目标。需要导师1v1可申请。";
+        if(rate>=30) return "⚠️ 进度偏慢，AI建议优先完成「" + (intern.tasks.find(t=>!t.completed)?.name||"核心任务") + "」，今晚有答疑。";
+        return "🚨 风险预警：请及时跟导师同步卡点，推荐学习《新人加速包》。";
+    }
+
+    function renderMentor() {
+        let html = `<div class="card-grid">`;
+        for(let intern of internsData) {
+            let stats = computeStats(intern);
+            html += `<div class="intern-card" data-id="${intern.id}">
+                <div class="card-header"><span class="name">${intern.name}</span><span class="stage-badge">${intern.stage}</span></div>
+                <div class="progress-area"><div class="progress-label"><span>任务进度</span><span>${stats.completionRate}%</span></div>
+                <div class="progress-bar-bg"><div class="progress-fill" style="width:${stats.completionRate}%;"></div></div></div>
+                <ul class="task-list">${intern.tasks.map(task=>`<li class="task-item"><input type="checkbox" class="task-check" data-intern="${intern.id}" data-taskid="${task.id}" ${task.completed?'checked':''}><span class="task-name ${task.completed?'completed':''}">${task.name}</span></li>`).join('')}</ul>
+                <div class="mentor-comment">📝 导师评语：${intern.mentorComment}</div>
+                <div class="add-task-form"><input type="text" id="newTask-${intern.id}" placeholder="新任务名称"><button onclick="addTask(${intern.id})">+ 下发任务</button></div>
+                <textarea id="comment-${intern.id}" rows="1" placeholder="写新评语..."></textarea>
+                <button onclick="updateComment(${intern.id})" style="margin-top:6px; width:100%;">保存评语</button>
+            </div>`;
+        }
+        html+=`</div>`;
+        document.getElementById('app-content').innerHTML = html;
+        attachEvents();
+    }
+
+    function renderIntern() {
+        let html = `<div class="card-grid">`;
+        for(let intern of internsData) {
+            let stats = computeStats(intern);
+            let aiMsg = getAISuggestion(intern);
+            html += `<div class="intern-card">
+                <div class="card-header"><span class="name">👤 ${intern.name}</span><span class="stage-badge">${intern.stage}</span></div>
+                <div class="progress-area"><div class="progress-label"><span>你的学习进度</span><span>${stats.completionRate}%</span></div>
+                <div class="progress-bar-bg"><div class="progress-fill" style="width:${stats.completionRate}%;"></div></div></div>
+                <ul class="task-list">${intern.tasks.map(task=>`<li class="task-item"><input type="checkbox" class="task-check" data-intern="${intern.id}" data-taskid="${task.id}" ${task.completed?'checked':''}><span class="task-name ${task.completed?'completed':''}">${task.name}</span></li>`).join('')}</ul>
+                <div class="ai-suggestion">🤖 AI 成长建议：${aiMsg}</div>
+                <div class="mentor-comment">🧑‍🏫 导师说：${intern.mentorComment}</div>
+            </div>`;
+        }
+        html+=`</div>`;
+        document.getElementById('app-content').innerHTML = html;
+        attachEvents();
+    }
+
+    function renderRecruiter() {
+        let html = `<div class="card-grid">`;
+        for(let intern of internsData) {
+            let stats = computeStats(intern);
+            let risk = stats.fitnessScore<60 ? '⚠️ 关注岗能匹配' : (stats.fitnessScore>=85? '🌟 高潜人才':'✓ 适岗正常');
+            html += `<div class="intern-card">
+                <div class="card-header"><span class="name">${intern.name}</span><span class="stage-badge">${intern.stage}</span></div>
+                <div class="fitness-score"><span>📊 综合适岗评分</span><span class="score-value" style="background:#1e6f3f20; padding:4px 12px; border-radius:40px;">${stats.fitnessScore}分</span></div>
+                <div>✅ 任务完成率: ${stats.completionRate}%</div>
+                <div>📌 导师评述: ${intern.mentorComment.slice(0,40)}</div>
+                <div style="margin-top:12px;">${risk}</div>
+                <div style="margin-top:12px; background:#f4f7fb; border-radius:16px; padding:8px;"><small>💡 招聘建议: ${stats.fitnessScore>=75?'推荐重点留用培养':(stats.fitnessScore>=60?'持续观察第三周表现':'建议导师介入沟通')}</small></div>
+            </div>`;
+        }
+        html+=`<div style="background:white; border-radius:24px; padding:20px; margin-top:20px;"><h3>📈 整体适岗分布</h3><div>高潜(≥85): ${internsData.filter(i=>computeStats(i).fitnessScore>=85).length}人</div><div>正常(60-84): ${internsData.filter(i=>{let s=computeStats(i).fitnessScore; return s>=60 && s<85;}).length}人</div><div>关注(<60): ${internsData.filter(i=>computeStats(i).fitnessScore<60).length}人</div></div>`;
+        document.getElementById('app-content').innerHTML = html;
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.task-check').forEach(cb => {
+            cb.removeEventListener('change', handleTaskChange);
+            cb.addEventListener('change', handleTaskChange);
+        });
+    }
+    function handleTaskChange(e) {
+        let cb = e.target;
+        let internId = parseInt(cb.dataset.intern);
+        let taskId = cb.dataset.taskid;
+        let intern = internsData.find(i=>i.id===internId);
+        if(intern) {
+            let task = intern.tasks.find(t=>t.id===taskId);
+            if(task) task.completed = cb.checked;
+            refreshCurrentView();
+        }
+    }
+    window.addTask = function(internId) {
+        let input = document.getElementById(`newTask-${internId}`);
+        let name = input.value.trim();
+        if(!name) return alert("请输入任务名称");
+        let intern = internsData.find(i=>i.id===internId);
+        if(intern) {
+            intern.tasks.push({ id: Date.now()+"", name: name, completed: false });
+            input.value = '';
+            refreshCurrentView();
+        }
+    };
+    window.updateComment = function(internId) {
+        let ta = document.getElementById(`comment-${internId}`);
+        let val = ta.value.trim();
+        if(!val) return;
+        let intern = internsData.find(i=>i.id===internId);
+        if(intern) { intern.mentorComment = val; refreshCurrentView(); }
+    };
+    let currentRole = 'mentor';
+    function refreshCurrentView() {
+        if(currentRole==='mentor') renderMentor();
+        else if(currentRole==='intern') renderIntern();
+        else renderRecruiter();
+    }
+    document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            currentRole = btn.dataset.role;
+            refreshCurrentView();
+        });
+    });
+    renderMentor();
+</script>
+</body>
+</html>
